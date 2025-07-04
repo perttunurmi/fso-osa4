@@ -1,0 +1,20 @@
+{
+  "name": "blogilista",
+  "version": "1.0.0",
+  "description": "blogilistasovellus, jonka avulla käyttäjien on mahdollista tallettaa tietoja Internetistä löytämistään mielenkiintoisista blogeista. Kustakin blogista talletetaan sen kirjoittaja (author), aihe (title), url sekä blogilistasovelluksen käyttäjien antamien äänien määrä.",
+  "homepage": "https://github.com/perttunurmi/fso-osa4#readme",
+  "bugs": {
+    "url": "https://github.com/perttunurmi/fso-osa4/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/perttunurmi/fso-osa4.git"
+  },
+  "license": "ISC",
+  "author": "Perttu Nurmi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
