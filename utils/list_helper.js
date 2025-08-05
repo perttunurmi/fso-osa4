@@ -44,9 +44,37 @@ const mostBlogs = (blogs) => {
 
 }
 
+const howManyLikes = (blogs, author) => {
+  return blogs.reduce((sum, curr) => curr.author === author ? sum + curr.likes : sum
+    , 0
+  )
+}
+
+const mostLikes = (blogs) => {
+
+  const likes = blogs.map((blog) => {
+    return {
+      author: blog.author,
+      likes: howManyLikes(blogs, blog.author)
+    }
+  })
+
+  console.log(likes)
+
+  const most = likes.reduce((most, curr) => {
+    return curr.likes > most.likes ? curr : most
+  }, likes[0])
+
+  return {
+    author: most.author,
+    likes: most.likes
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
