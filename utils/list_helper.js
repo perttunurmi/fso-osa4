@@ -59,8 +59,6 @@ const mostLikes = (blogs) => {
     }
   })
 
-  console.log(likes)
-
   const most = likes.reduce((most, curr) => {
     return curr.likes > most.likes ? curr : most
   }, likes[0])
