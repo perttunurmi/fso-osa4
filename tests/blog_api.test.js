@@ -60,7 +60,7 @@ describe("Blogs api tests", async () => {
     const response = await api.post('/api/blogs').send({
       title: "Test",
       author: "Test",
-      url: "Tämä",
+      url: "Tets",
     })
 
     newBlog = JSON.parse(response.text)
@@ -68,10 +68,24 @@ describe("Blogs api tests", async () => {
     assert.strictEqual(newBlog.likes, 0)
 
   })
+
+  test("A blog must have an title and author", async () => {
+
+    await api.post('/api/blogs').send({
+      author: "Test"
+    }).expect(400)
+
+    await api.post('/api/blogs').send({
+      title: "Test"
+    }).expect(400)
+
+    await api.post('/api/blogs').send({}).expect(400)
+
+  })
+
 })
 
 
 after(async () => {
   await mongoose.connection.close()
 })
-
