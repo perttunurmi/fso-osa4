@@ -55,6 +55,19 @@ describe("Blogs api tests", async () => {
     assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 
   })
+
+  test("Zero likes is the norm", async () => {
+    const response = await api.post('/api/blogs').send({
+      title: "Test",
+      author: "Test",
+      url: "Tämä",
+    })
+
+    newBlog = JSON.parse(response.text)
+
+    assert.strictEqual(newBlog.likes, 0)
+
+  })
 })
 
 
