@@ -40,6 +40,21 @@ describe("Blogs api tests", async () => {
     })
   })
 
+  test("Adding a blog", async () => {
+
+    await api.post('/api/blogs').send({
+      title: "Test",
+      author: "Test",
+      url: "Test",
+      likes: 0,
+    })
+
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+
+    assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
+
+  })
 })
 
 
