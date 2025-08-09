@@ -30,7 +30,18 @@ describe("Blogs api tests", async () => {
     assert.strictEqual(blogs.length, helper.initialBlogs.length)
   })
 
+
+  test("Blogs contain id", async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+
+    blogs.forEach((blog) => {
+      assert(blog.id)
+    })
+  })
+
 })
+
 
 after(async () => {
   await mongoose.connection.close()
