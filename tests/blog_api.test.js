@@ -70,7 +70,6 @@ describe("Blogs api tests", async () => {
   })
 
   test("A blog must have an title and author", async () => {
-
     await api.post('/api/blogs').send({
       author: "Test"
     }).expect(400)
@@ -80,11 +79,39 @@ describe("Blogs api tests", async () => {
     }).expect(400)
 
     await api.post('/api/blogs').send({}).expect(400)
+  })
 
+  test("Delete blog", async () => {
+    const blog = await api.post('/api/blogs/').send({
+      title: "Test",
+      author: "Test",
+    })
+
+    await api.delete(`/api/blogs/${blog.body.id}`)
+      .expect(204)
+  })
+
+
+  test("Editing existing", async () => {
+    const blog = await api.post('/api/blogs/').send({
+      title: "Test",
+      author: "Test",
+    })
+
+    await api.put(`/api/blogs/${blog.body.id}`).send({
+      title: blog.body.title,
+      author: blog.body.title,
+      likes: 1,
+    })
+
+    const response = await api.get('/api/blogs/')
+    const blogs = response.body
+    const edited = blogs.find((obj) => obj.id === blog.body.id)
+
+    assert.deepEqual(edited.likes, 1)
   })
 
 })
-
 
 after(async () => {
   await mongoose.connection.close()

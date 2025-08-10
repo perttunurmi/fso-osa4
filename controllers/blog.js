@@ -1,13 +1,18 @@
 const blogRouter = require('express').Router()
+const { request } = require('express')
 const Blog = require('../models/blog')
 
-blogRouter.get('/', (request, response) => {
-  Blog.find({}).then((blogs) => {
+blogRouter.get('/', async (request, response) => {
+  try {
+    const blogs = await Blog.find({})
     response.json(blogs)
-  })
+  } catch (e) {
+    console.log(e)
+    response.status(500)
+  }
 })
 
-blogRouter.post('/', (request, response) => {
+blogRouter.post('/', async (request, response) => {
   // const blog = new Blog(request.body)
   body = request.body
 
@@ -20,12 +25,45 @@ blogRouter.post('/', (request, response) => {
 
   if (!blog.title || !blog.author) {
     response.status(400).json({})
-  } else {
-    blog.save().then((result) => {
-      response.status(201).json(result)
-    })
+    return
+  }
+
+  try {
+    const result = await blog.save()
+    response.status(201).json(result)
+  } catch (e) {
+    console.log(e)
+    response.status(500)
   }
 })
 
+blogRouter.delete('/:id', async (request, response) => {
+  try {
+    const result = await Blog.findByIdAndDelete(request.params.id)
+    response.status(204).json(result)
+  } catch (e) {
+    console.log(e)
+    response.status(500)
+  }
+})
+
+blogRouter.put('/:id', async (request, response) => {
+  try {
+    const result = await Blog.findByIdAndUpdate(
+      request.params.id,
+      {
+        title: request.body.title,
+        author: request.body.author,
+        url: request.body.url,
+        likes: request.body.likes,
+      },
+      { runValidators: true },
+    )
+    response.json(result)
+  } catch (e) {
+    console.log(e)
+    response.status(500)
+  }
+})
 
 module.exports = blogRouter
