@@ -1,5 +1,4 @@
 const blogRouter = require('express').Router()
-const { request } = require('express')
 const Blog = require('../models/blog')
 
 blogRouter.get('/', async (request, response) => {
@@ -14,12 +13,12 @@ blogRouter.get('/', async (request, response) => {
 
 blogRouter.post('/', async (request, response) => {
   // const blog = new Blog(request.body)
-  body = request.body
+  const body = request.body
 
   const blog = new Blog({
     title: body.title,
     author: body.author,
-    url: body.url || "",
+    url: body.url || '',
     likes: body.likes || 0,
   })
 

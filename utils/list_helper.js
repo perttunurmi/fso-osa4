@@ -1,4 +1,4 @@
-const dummy = (blogs) => {
+const dummy = () => {
   return 1
 }
 
@@ -24,9 +24,9 @@ const howManyBlogs = (blogs, author) => {
 // Päähän sattui, mutta sain toteutettua ilman for-looppia!
 const mostBlogs = (blogs) => {
 
-  counts = blogs.map(
+  const counts = blogs.map(
     (blog) => {
-      author = {
+      const author = {
         author: blog.author,
         count: howManyBlogs(blogs, blog.author)
       }
@@ -34,7 +34,7 @@ const mostBlogs = (blogs) => {
     }
   )
 
-  most = counts.reduce((most, curr) => curr.count > most.count ? curr : most
+  const most = counts.reduce((most, curr) => curr.count > most.count ? curr : most
     , counts[0])
 
   return {

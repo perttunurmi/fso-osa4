@@ -1,16 +1,16 @@
-const { test, after, describe, before, beforeEach } = require('node:test')
+const { test, after, describe, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
-app = require('../app.js')
+const app = require('../app.js')
 
 const api = supertest(app)
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-  console.log("Deleted")
+  console.log('Deleted')
 
   const blogObjects = helper.initialBlogs.map(
     blog => new Blog(blog)
@@ -21,9 +21,9 @@ beforeEach(async () => {
   console.log('Initialized')
 })
 
-describe("Blogs api tests", async () => {
+describe('Blogs api tests', async () => {
 
-  test("Right amount of blogs", async () => {
+  test('Right amount of blogs', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
 
@@ -31,7 +31,7 @@ describe("Blogs api tests", async () => {
   })
 
 
-  test("Blogs contain id", async () => {
+  test('Blogs contain id', async () => {
     const response = await api.get('/api/blogs')
     const blogs = response.body
 
@@ -40,12 +40,12 @@ describe("Blogs api tests", async () => {
     })
   })
 
-  test("Adding a blog", async () => {
+  test('Adding a blog', async () => {
 
     await api.post('/api/blogs').send({
-      title: "Test",
-      author: "Test",
-      url: "Test",
+      title: 'Test',
+      author: 'Test',
+      url: 'Test',
       likes: 0,
     })
 
@@ -56,35 +56,35 @@ describe("Blogs api tests", async () => {
 
   })
 
-  test("Zero likes is the norm", async () => {
+  test('Zero likes is the norm', async () => {
     const response = await api.post('/api/blogs').send({
-      title: "Test",
-      author: "Test",
-      url: "Tets",
+      title: 'Test',
+      author: 'Test',
+      url: 'Tets',
     })
 
-    newBlog = JSON.parse(response.text)
+    const newBlog = JSON.parse(response.text)
 
     assert.strictEqual(newBlog.likes, 0)
 
   })
 
-  test("A blog must have an title and author", async () => {
+  test('A blog must have an title and author', async () => {
     await api.post('/api/blogs').send({
-      author: "Test"
+      author: 'Test'
     }).expect(400)
 
     await api.post('/api/blogs').send({
-      title: "Test"
+      title: 'Test'
     }).expect(400)
 
     await api.post('/api/blogs').send({}).expect(400)
   })
 
-  test("Delete blog", async () => {
+  test('Delete blog', async () => {
     const blog = await api.post('/api/blogs/').send({
-      title: "Test",
-      author: "Test",
+      title: 'Test',
+      author: 'Test',
     })
 
     await api.delete(`/api/blogs/${blog.body.id}`)
@@ -92,10 +92,10 @@ describe("Blogs api tests", async () => {
   })
 
 
-  test("Editing existing", async () => {
+  test('Editing existing', async () => {
     const blog = await api.post('/api/blogs/').send({
-      title: "Test",
-      author: "Test",
+      title: 'Test',
+      author: 'Test',
     })
 
     await api.put(`/api/blogs/${blog.body.id}`).send({
