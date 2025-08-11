@@ -1,17 +1,16 @@
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 
-blogRouter.get('/', async (request, response) => {
+blogRouter.get('/', async (_, response, next) => {
   try {
     const blogs = await Blog.find({})
     response.json(blogs)
   } catch (e) {
-    console.log(e)
-    response.status(500)
+    next(e)
   }
 })
 
-blogRouter.post('/', async (request, response) => {
+blogRouter.post('/', async (request, response, next) => {
   const body = request.body
 
   const blog = new Blog({
@@ -30,22 +29,20 @@ blogRouter.post('/', async (request, response) => {
     const result = await blog.save()
     response.status(201).json(result)
   } catch (e) {
-    console.log(e)
-    response.status(500)
+    next(e)
   }
 })
 
-blogRouter.delete('/:id', async (request, response) => {
+blogRouter.delete('/:id', async (request, response, next) => {
   try {
     const result = await Blog.findByIdAndDelete(request.params.id)
     response.status(204).json(result)
   } catch (e) {
-    console.log(e)
-    response.status(500)
+    next(e)
   }
 })
 
-blogRouter.put('/:id', async (request, response) => {
+blogRouter.put('/:id', async (request, response, next) => {
   try {
     const result = await Blog.findByIdAndUpdate(
       request.params.id,
@@ -59,8 +56,7 @@ blogRouter.put('/:id', async (request, response) => {
     )
     response.json(result)
   } catch (e) {
-    console.log(e)
-    response.status(500)
+    next(e)
   }
 })
 
