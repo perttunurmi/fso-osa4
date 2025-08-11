@@ -2,17 +2,19 @@ const { response } = require('express')
 const logger = require('./logger')
 
 const requestLogger = (request, response, next) => {
-  logger.info('Method:', request.method)
-  logger.info('Path:  ', request.url)
+  if (!process.env.NODE_ENV === 'test') {
+    logger.info('Method:', request.method)
+    logger.info('Path:  ', request.url)
 
-  if (request.url === '/api/users') {
-    const user = request.body.username
+    if (request.url === '/api/users') {
+      const user = request.body.username
 
-    logger.info('Body:  ', user)
-  } else {
-    logger.info('Body:  ', request.body)
+      logger.info('Body:  ', user)
+    } else {
+      logger.info('Body:  ', request.body)
+    }
+    logger.info('---')
   }
-  logger.info('---')
   next()
 }
 
@@ -27,6 +29,8 @@ const errorHandler = (error, _, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
+  } else if (error.errmsg.includes('E11000 duplicate key error collection: Blogilista.users index:')) {
+    return response.status(400).json({ error: 'username taken' })
   }
 
   next(error)

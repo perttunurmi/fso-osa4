@@ -5,11 +5,11 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
     minLength: 3,
+    unique: true,
   },
   name: String,
   passwordHash: {
     type: String,
-    required: true,
   },
   blogs: [
     {

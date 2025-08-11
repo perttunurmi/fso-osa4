@@ -6,6 +6,16 @@ usersRouter.post('/', async (request, response, next) => {
   try {
     const { username, name, password } = request.body
 
+    if (password.length < 3) {
+      response.status(400).json({ message: 'Password too short' })
+      return
+    }
+
+    if (username.length < 3) {
+      response.status(400).json({ message: 'Username too short' })
+      return
+    }
+
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(password, saltRounds)
 

@@ -37,8 +37,24 @@ const initialBlogs = [
   }
 ]
 
+const initialUsers = [
+  {
+    'username': 'root',
+    'name': 'root',
+    'blogs': [],
+    'id': '689a20a159f8d87947ea3b74'
+  },
+  {
+    'username': 'admin',
+    'name': 'admin',
+    'blogs': [],
+    'id': '689a25f9a285c713d442b91f'
+  }
+]
+
 
 
 module.exports = {
-  initialBlogs
+  initialBlogs,
+  initialUsers
 }
