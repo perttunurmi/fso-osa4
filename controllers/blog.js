@@ -1,6 +1,8 @@
+require('dotenv')
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const jwt = require('jsonwebtoken')
 
 blogRouter.get('/', async (_, response, next) => {
   try {
@@ -11,13 +13,28 @@ blogRouter.get('/', async (_, response, next) => {
   }
 })
 
+const getTokenFrom = request => {
+  const auth = request.get('authorization')
+  if (auth && auth.startsWith('Bearer ')) {
+    return auth.replace('Bearer ', '')
+  }
+  return null
+}
+
 blogRouter.post('/', async (request, response, next) => {
   const body = request.body
 
-  const users = await User.find({})
-  const user = users[0]
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
 
-  if (!user) { return response.status(400).json({ error: 'missing id for user or it\'s not valid' }) }
+  if (!user) {
+    return response.status(400).json(
+      { error: 'missing id for user or it\'s not valid' }
+    )
+  }
 
   const blog = new Blog({
     title: body.title,

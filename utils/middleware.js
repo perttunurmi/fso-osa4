@@ -29,7 +29,8 @@ const errorHandler = (error, _, response, next) => {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
-  } else if (error.errmsg.includes('E11000 duplicate key error collection: Blogilista.users index:')) {
+  } else if (error.errmsg && error.errmsg.includes('E11000 duplicate key error collection: Blogilista.users index:')) {
+    console.log(error.errmsg)
     return response.status(400).json({ error: 'username taken' })
   }
 
