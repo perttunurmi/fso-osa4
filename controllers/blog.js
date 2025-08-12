@@ -1,8 +1,8 @@
 require('dotenv')
+const middleware = require('../utils/middleware')
 const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 blogRouter.get('/', async (_, response, next) => {
   try {
@@ -13,7 +13,7 @@ blogRouter.get('/', async (_, response, next) => {
   }
 })
 
-blogRouter.post('/', async (request, response, next) => {
+blogRouter.post('/', middleware.userExtractor, async (request, response, next) => {
   const body = request.body
 
   if (!request.token) {
@@ -22,13 +22,7 @@ blogRouter.post('/', async (request, response, next) => {
     )
   }
 
-  const user = await User.findById(request.token.id)
-
-  if (!user) {
-    return response.status(400).json(
-      { error: 'missing id for user or it\'s not valid' }
-    )
-  }
+  const user = request.user
 
   const blog = new Blog({
     title: body.title,
@@ -53,20 +47,14 @@ blogRouter.post('/', async (request, response, next) => {
   }
 })
 
-blogRouter.delete('/:id', async (request, response, next) => {
+blogRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
   if (!request.token) {
     return response.status(401).json(
       { error: 'Token is undefined' }
     )
   }
 
-  const user = await User.findById(request.token.id)
-
-  if (!user) {
-    return response.status(400).json(
-      { error: 'missing id for user or it\'s not valid' }
-    )
-  }
+  const user = request.user
 
   try {
     const blog = await Blog.findById(request.params.id)

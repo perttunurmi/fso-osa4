@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken')
-const { response } = require('express')
+const { response, request } = require('express')
 const logger = require('./logger')
+const User = require('../models/user')
 
 const requestLogger = (request, response, next) => {
   if (!process.env.NODE_ENV === 'test') {
@@ -60,9 +61,31 @@ const tokenExtractor = (request, _, next) => {
   next()
 }
 
+const userExtractor = async (request, response, next) => {
+  try {
+
+    const user = await User.findById(request.token.id)
+    if (!user) {
+      return response.status(400).json(
+        { error: 'missing id for user or it\'s not valid' }
+      )
+    }
+
+    request.user = user
+
+  } catch (e) {
+    logger.error(e)
+    next(e)
+  }
+
+
+  next()
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
+  userExtractor,
 }
