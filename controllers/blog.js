@@ -16,6 +16,12 @@ blogRouter.get('/', async (_, response, next) => {
 blogRouter.post('/', async (request, response, next) => {
   const body = request.body
 
+  if (!request.token) {
+    return response.status(401).json(
+      { error: 'Token is undefined' }
+    )
+  }
+
   const user = await User.findById(request.token.id)
 
   if (!user) {
@@ -48,6 +54,32 @@ blogRouter.post('/', async (request, response, next) => {
 })
 
 blogRouter.delete('/:id', async (request, response, next) => {
+  if (!request.token) {
+    return response.status(401).json(
+      { error: 'Token is undefined' }
+    )
+  }
+
+  const user = await User.findById(request.token.id)
+
+  if (!user) {
+    return response.status(400).json(
+      { error: 'missing id for user or it\'s not valid' }
+    )
+  }
+
+  try {
+    const blog = await Blog.findById(request.params.id)
+    if (blog.user.toString() !== user.id) {
+      return response.status(401).json(
+        { error: 'You don\'t have the rights to remove resource' }
+      )
+    }
+
+  } catch (e) {
+    next(e)
+  }
+
   try {
     const result = await Blog.findByIdAndDelete(request.params.id)
     response.status(204).json(result)
