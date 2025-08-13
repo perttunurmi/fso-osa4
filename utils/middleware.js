@@ -39,30 +39,37 @@ const errorHandler = (error, _, response, next) => {
   next(error)
 }
 
-const tokenExtractor = (request, _, next) => {
-
+const getTokenFrom = request => {
   const auth = request.get('authorization')
   if (auth && auth.startsWith('Bearer ')) {
-    const getTokenFrom = request => {
-      const auth = request.get('authorization')
-      if (auth && auth.startsWith('Bearer ')) {
-        return auth.replace('Bearer ', '')
-      }
-      return null
-    }
+    return auth.replace('Bearer ', '')
+  }
+  return null
+}
+
+const tokenExtractor = (request, response, next) => {
+  const auth = request.get('authorization')
+  if (auth && auth.startsWith('Bearer ')) {
 
     const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-    if (!decodedToken.id) {
+    if (!decodedToken || !decodedToken.id) {
       return response.status(401).json({ error: 'token invalid' })
     }
 
     request.token = decodedToken
   }
+
   next()
 }
 
 const userExtractor = async (request, response, next) => {
   try {
+
+    if (!request.token) {
+      return response.status(401).json(
+        { error: 'Missing authorization' }
+      )
+    }
 
     const user = await User.findById(request.token.id)
     if (!user) {
